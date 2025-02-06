@@ -1,0 +1,15 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: cdc_develop
+  password: cdc_develop
+  host: localhost
+
+development:
+  <<: *default
+  database: influencer_marketing_development
+
+test:
+  <<: *default
+  database: influencer_marketing_test
