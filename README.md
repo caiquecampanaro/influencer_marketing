@@ -1,25 +1,34 @@
-# README
+# Influencer Marketing
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Este projeto é uma aplicação de marketing de influenciadores, onde dados de influenciadores são sincronizados de uma API externa e salvos em um banco de dados.
 
-Things you may want to cover:
+## Pré-requisitos
 
-* Ruby version
+- Ruby 3.1.0 ou superior
+- Rails 8.0.1 ou superior
+- PostgreSQL
+- Bundler 
 
-* System dependencies
+## Instalação
 
-* Configuration
+1. Clone este repositório:
+   git clone git@github.com:caiquecampanaro/influencer_marketing.git
 
-* Database creation
+2. Navegue até a pasta do projeto:
+cd influencer_marketing
 
-* Database initialization
+3. Instale as dependências do Ruby:
+bundle install
 
-* How to run the test suite
+4. Configure o banco de dados:
+rails db:create
+rails db:migrate
 
-* Services (job queues, cache servers, search engines, etc.)
+5. Inicie o servidor Rails:
+rails s
 
-* Deployment instructions
+6. Acesse postman com requisição GET:
+URL: http://localhost:3000/api/v1/sync
 
-* ...
-# influencer_marketing
+7. Para rodar os testes do projeto, utilize:
+rspec
