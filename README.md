@@ -4,8 +4,8 @@ Este projeto é uma aplicação de marketing de influenciadores, onde dados de i
 
 ## Pré-requisitos
 
-- Ruby 3.1.0 ou superior
-- Rails 8.0.1 ou superior
+- Ruby 3.3.6
+- Rails 8.0.1
 - PostgreSQL
 - Bundler 
 
