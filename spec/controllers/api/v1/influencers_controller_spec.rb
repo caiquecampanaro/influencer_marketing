@@ -4,25 +4,19 @@ require 'rails_helper'
 RSpec.describe Api::V1::InfluencersController, type: :controller do
   describe "GET #sync" do
     it "syncs influencers from external API and returns a success message" do
-      # Mocks a resposta da API externa
       allow(Faraday).to receive(:get).and_return(double("response", status: 200, body: '[{"username": "johndoe123", "name": "John Doe", "email": "john.doe@example.com"}]'))
 
-      # Realiza a requisição GET
       get :sync
 
-      # Verifica se a resposta foi bem-sucedida
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Influencers synced successfully")
     end
 
     it "returns an error message when the external API request fails" do
-      # Mocks uma falha na requisição da API externa
       allow(Faraday).to receive(:get).and_return(double("response", status: 500, body: ''))
 
-      # Realiza a requisição GET
       get :sync
 
-      # Verifica se a resposta foi um erro
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to include("Failed to fetch data from external API")
     end

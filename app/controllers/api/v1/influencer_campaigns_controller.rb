@@ -2,19 +2,16 @@ module Api
     module V1
       class InfluencerCampaignsController < ApplicationController
         before_action :set_influencer_campaign, only: [:show, :destroy]
-  
-        # List all influencer campaigns
+
         def index
           @influencer_campaigns = InfluencerCampaign.all
           render json: @influencer_campaigns
         end
   
-        # Show a specific influencer campaign
         def show
           render json: @influencer_campaign
         end
   
-        # Create a new influencer campaign (link influencer with campaign)
         def create
           @influencer_campaign = InfluencerCampaign.new(influencer_campaign_params)
   
@@ -25,7 +22,6 @@ module Api
           end
         end
   
-        # Delete an influencer campaign association
         def destroy
           @influencer_campaign.destroy
           head :no_content

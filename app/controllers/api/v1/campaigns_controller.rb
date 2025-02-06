@@ -3,18 +3,15 @@ module Api
       class CampaignsController < ApplicationController
         before_action :set_campaign, only: [:show, :update, :destroy]
   
-        # List all campaigns
         def index
           @campaigns = Campaign.all
           render json: @campaigns
         end
   
-        # Show a specific campaign
         def show
           render json: @campaign
         end
   
-        # Create a new campaign
         def create
           @campaign = Campaign.new(campaign_params)
   
@@ -25,7 +22,6 @@ module Api
           end
         end
   
-        # Update a campaign
         def update
           if @campaign.update(campaign_params)
             render json: @campaign
@@ -34,7 +30,6 @@ module Api
           end
         end
   
-        # Delete a campaign
         def destroy
           @campaign.destroy
           head :no_content
