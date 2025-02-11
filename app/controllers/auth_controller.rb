@@ -3,14 +3,14 @@ class AuthController < ApplicationController
   def tiktok
     client_key = 'sbawualtc227t17bl4'
     
-    # Priorizar ngrok se disponível
-    ngrok_url = 'https://647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app'
-    redirect_uri = "#{ngrok_url}/auth/callback"
+    # Definir redirect URI de forma mais explícita
+    ngrok_base = '647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app'
+    redirect_uri = "https://#{ngrok_base}/auth/callback"
     
     Rails.logger.debug("=" * 50)
     Rails.logger.debug("INICIANDO FLUXO DE AUTORIZAÇÃO TIKTOK")
     Rails.logger.debug("Client Key: #{client_key}")
-    Rails.logger.debug("Redirect URI: #{redirect_uri}")
+    Rails.logger.debug("Redirect URI Original: #{redirect_uri}")
     
     # Encode do redirect_uri para verificação
     encoded_redirect_uri = URI.encode_www_form_component(redirect_uri)
@@ -18,7 +18,7 @@ class AuthController < ApplicationController
 
     # Atualizar scopes para corresponder aos configurados
     scope = 'user.info.basic,video.publish,video.upload,artist.certification.read,user.info.profile'
-    scope = scope.split(',').join('%20')
+    scope = scope.split(',').map { |s| URI.encode_www_form_component(s) }.join('%20')
     Rails.logger.debug("Scopes Processados: #{scope}")
 
     # Gerar code_verifier e code_challenge para PKCE
@@ -32,14 +32,16 @@ class AuthController < ApplicationController
     session[:code_verifier] = code_verifier
 
     # Construir URL de autorização com parâmetros explicitamente separados
-    @auth_url = "https://www.tiktok.com/v2/auth/authorize/?" + [
-      "client_key=#{client_key}",
-      "scope=#{scope}",
-      "response_type=code",
-      "redirect_uri=#{encoded_redirect_uri}",
-      "code_challenge=#{code_challenge}",
-      "code_challenge_method=S256"
-    ].join('&')
+    auth_params = {
+      client_key: client_key,
+      scope: scope,
+      response_type: 'code',
+      redirect_uri: encoded_redirect_uri,
+      code_challenge: code_challenge,
+      code_challenge_method: 'S256'
+    }
+
+    @auth_url = "https://www.tiktok.com/v2/auth/authorize/?" + auth_params.map { |k, v| "#{k}=#{v}" }.join('&')
 
     Rails.logger.debug("URL de autorização gerada: #{@auth_url}")
     
