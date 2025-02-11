@@ -70,8 +70,8 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # Configurar variáveis de ambiente para TikTok
-  config.x.tiktok.client_key = 'sbawualtc227t17bl4'
-  config.x.tiktok.client_secret = 'QDDbiHtTVWlU8kQWHQbuj6R3qOdOgGqD'
+  config.x.tiktok.client_key = 'sbawf4zxt54h5z7in6'
+  config.x.tiktok.client_secret = 'G9h5MBZ765gAEpHhH6Qys1pvG57O0T4x'
 
   # Definir variáveis de ambiente
   ENV['TIKTOK_CLIENT_KEY'] = config.x.tiktok.client_key
@@ -79,5 +79,14 @@ Rails.application.configure do
 
   # Adicionar host do ngrok
   config.hosts << "647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app"
+
+  # Configurações para servir arquivos estáticos em subdiretórios
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = {
+    'Cache-Control' => 'public, max-age=3600'
+  }
+  
+  # Permitir servir arquivos de verificação em qualquer subdiretório
+  config.public_file_server.serve_static_files = true
 
 end

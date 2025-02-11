@@ -1,37 +1,118 @@
 class AuthController < ApplicationController
   # Step 1: Redirecionar o usuário para o TikTok para autorização
   def tiktok
-    client_key = 'sbawualtc227t17bl4'
+    # Configurações de autorização para novo sandbox
+    client_key = 'sbawf4zxt54h5z7in6'
+    client_secret = 'G9h5MBZ765gAEpHhH6Qys1pvG57O0T4x'
     
-    # Definir redirect URI de forma mais explícita
-    ngrok_base = '647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app'
-    redirect_uri = "https://#{ngrok_base}/auth/callback"
-    
-    Rails.logger.debug("=" * 50)
-    Rails.logger.debug("INICIANDO FLUXO DE AUTORIZAÇÃO TIKTOK")
+    # Log de diagnóstico detalhado
+    Rails.logger.debug("=" * 80)
+    Rails.logger.debug("DIAGNÓSTICO CRÍTICO DE AUTORIZAÇÃO TIKTOK")
     Rails.logger.debug("Client Key: #{client_key}")
-    Rails.logger.debug("Redirect URI Original: #{redirect_uri}")
+    Rails.logger.debug("Comprimento da Client Key: #{client_key.length}")
     
-    # Encode do redirect_uri para verificação
+    # Verificações de segurança adicionais
+    if client_key.nil? || client_key.empty?
+      error_message = "ERRO CRÍTICO: Client Key não configurada"
+      Rails.logger.error(error_message)
+      return render plain: error_message, status: :internal_server_error
+    end
+    
+    # Adicionar log de ambiente de desenvolvimento
+    Rails.logger.debug("Ambiente: #{Rails.env}")
+    Rails.logger.debug("Configurações do TikTok:")
+    Rails.logger.debug("  - Client Key: #{client_key}")
+    
+    # Informações de configuração
+    # client_secret = 'QDDbiHtTVWlU8kQWHQbuj6R3qOdOgGqD'
+    
+    # Logs de diagnóstico detalhados
+    # Rails.logger.debug("=" * 50)
+    # Rails.logger.debug("DIAGNÓSTICO DETALHADO DE AUTORIZAÇÃO TIKTOK")
+    # Rails.logger.debug("Client Key: #{client_key}")
+    # Rails.logger.debug("Client Secret: #{client_secret[0,5]}...#{client_secret[-5,5]}")
+    
+    # Verificar tamanho e formato da client_key
+    Rails.logger.debug("Tamanho da Client Key: #{client_key.length}")
+    Rails.logger.debug("Formato da Client Key: #{client_key =~ /^[a-z0-9]+$/ ? 'Válido' : 'Inválido'}")
+    
+    # Configurar redirect URI corretamente
+    redirect_uri = "https://647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app/auth/callback"
     encoded_redirect_uri = URI.encode_www_form_component(redirect_uri)
+    
+    # Logs de diagnóstico do redirect URI
+    Rails.logger.debug("=" * 50)
+    Rails.logger.debug("DIAGNÓSTICO DE REDIRECT URI")
+    Rails.logger.debug("Redirect URI Original: #{redirect_uri}")
     Rails.logger.debug("Redirect URI Encoded: #{encoded_redirect_uri}")
+    
+    # Scopes definidos pelo usuário
+    test_scopes = [
+      'user.info.basic', 
+      'video.upload'
+    ]
+    
+    # Diagnóstico CRÍTICO de scopes
+    def diagnose_tiktok_scopes(scopes)
+      Rails.logger.error("=" * 80)
+      Rails.logger.error("🚨 DIAGNÓSTICO CRÍTICO DE SCOPES TIKTOK 🚨")
+      
+      scopes.each do |scope|
+        case scope
+        when 'user.info.basic'
+          Rails.logger.error("✅ user.info.basic:")
+          Rails.logger.error("   - Descrição: Informações básicas do perfil")
+          Rails.logger.error("   - Dados: open id, avatar, nome de exibição")
+          Rails.logger.error("   - Status: Verificando elegibilidade...")
+        when 'video.upload'
+          Rails.logger.error("✅ video.upload:")
+          Rails.logger.error("   - Descrição: Upload de conteúdo como rascunho")
+          Rails.logger.error("   - Ação: Compartilhar conteúdo para edição")
+          Rails.logger.error("   - Status: Verificando permissões...")
+        else
+          Rails.logger.error("❌ Scope Desconhecido: #{scope}")
+        end
+      end
+      
+      # Verificações adicionais
+      Rails.logger.error("\n🔍 VERIFICAÇÕES ADICIONAIS:")
+      Rails.logger.error("   - Client Key Length: #{client_key.length}")
+      Rails.logger.error("   - Redirect URI: #{redirect_uri}")
+      Rails.logger.error("   - Ambiente: #{Rails.env}")
+      
+      Rails.logger.error("=" * 80)
+    end
 
-    # Atualizar scopes para corresponder aos configurados
-    scope = 'user.info.basic,video.publish,video.upload,artist.certification.read,user.info.profile'
-    scope = scope.split(',').map { |s| URI.encode_www_form_component(s) }.join('%20')
+    # Executar diagnóstico detalhado
+    diagnose_tiktok_scopes(test_scopes)
+    
+    # Função para processar scopes corretamente
+    def process_scopes(scopes)
+      # Processar scopes sem modificações
+      processed_scopes = scopes.map { |s| URI.encode_www_form_component(s) }.join('%20')
+      
+      Rails.logger.error("🔐 PROCESSAMENTO FINAL DE SCOPES:")
+      Rails.logger.error("   - Scopes Originais: #{scopes.join(', ')}")
+      Rails.logger.error("   - Scopes Processados: #{processed_scopes}")
+      
+      processed_scopes
+    end
+    
+    # Processar scopes
+    scope = process_scopes(test_scopes)
+    
+    Rails.logger.debug("Scopes Originais: #{test_scopes.join(' ')}")
     Rails.logger.debug("Scopes Processados: #{scope}")
 
-    # Gerar code_verifier e code_challenge para PKCE
-    code_verifier = SecureRandom.urlsafe_base64(64)
-    code_challenge = Base64.urlsafe_encode64(Digest::SHA256.digest(code_verifier)).gsub(/=+$/, '')
-
-    Rails.logger.debug("Code Verifier: #{code_verifier}")
-    Rails.logger.debug("Code Challenge: #{code_challenge}")
-
-    # Salvar code_verifier na sessão para uso posterior
+    # Geração de PKCE
+    code_verifier = SecureRandom.urlsafe_base64(64).tr('=', '')
+    sha256 = Digest::SHA256.digest(code_verifier)
+    code_challenge = Base64.strict_encode64(sha256).tr('=', '')
+    
+    # Salvar code_verifier na sessão
     session[:code_verifier] = code_verifier
-
-    # Construir URL de autorização com parâmetros explicitamente separados
+    
+    # Parâmetros de autorização
     auth_params = {
       client_key: client_key,
       scope: scope,
@@ -40,12 +121,24 @@ class AuthController < ApplicationController
       code_challenge: code_challenge,
       code_challenge_method: 'S256'
     }
-
-    @auth_url = "https://www.tiktok.com/v2/auth/authorize/?" + auth_params.map { |k, v| "#{k}=#{v}" }.join('&')
-
-    Rails.logger.debug("URL de autorização gerada: #{@auth_url}")
+    
+    # Log de diagnóstico
+    Rails.logger.debug("Parâmetros de Autorização:")
+    auth_params.each do |key, value|
+      Rails.logger.debug("  - #{key}: #{value}")
+    end
+    
+    # Construir URL de autorização
+    @auth_url = "https://www.tiktok.com/v2/auth/authorize/?" + 
+                auth_params.map { |k, v| "#{k}=#{v}" }.join('&')
+    
+    Rails.logger.debug("URL de Autorização Gerada: #{@auth_url}")
     
     render 'tiktok'
+  rescue => e
+    Rails.logger.error("Erro durante a geração da URL de autorização: #{e.message}")
+    Rails.logger.error("Backtrace: #{e.backtrace.join("\n")}")
+    render plain: "Erro durante a autorização: #{e.message}", status: :internal_server_error
   end
 
   # Step 2: O TikTok redireciona de volta com o código de autorização
