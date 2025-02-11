@@ -9,7 +9,7 @@ gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 gem 'faraday'
-
+gem 'rest-client'
 # gem "bcrypt", "~> 3.1.7"
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_06_194953) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_11_002902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_194953) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["username"], name: "index_influencers_on_username", unique: true
+  end
+
+  create_table "tik_toks", force: :cascade do |t|
+    t.string "name"
+    t.string "username"
+    t.text "bio_description"
+    t.integer "followers"
+    t.integer "total_views"
+    t.integer "upload_count"
+    t.integer "avg_last10_comments"
+    t.integer "avg_last10_likes"
+    t.integer "avg_last10_views"
+    t.float "engagement_rate"
+    t.integer "joined_count"
+    t.bigint "likes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "influencer_campaigns", "campaigns"
