@@ -1,11 +1,5 @@
-<div class="auth-success-container">
-  <div class="success-card">
-    <div class="success-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-      </svg>
-    </div>
+<div class="container">
+  <div class="success-container">
     
     <h1>Autorização Concluída</h1>
     
@@ -19,11 +13,62 @@
         <span class="token-label">Refresh Token:</span>
         <span class="token-value truncate"><%= @refresh_token.present? ? @refresh_token[0..3] + "..." + @refresh_token[-4..-1] : "****" %></span>
       </div>
-      </div>
-      <div class="success-actions">
-        <%= link_to "Próximo Passo", "#", class: "next-btn" %>
-        <%= link_to "Voltar para Início", "/", class: "home-btn" %>
-      </div>
+    </div>
+
+    <div class="profile-info">
+      <h3>Dados do Perfil TikTok</h3>
+      <table>
+        <tr>
+          <td>Nome:</td>
+          <td><%= @tiktok_profile.name %></td>
+        </tr>
+        <tr>
+          <td>Username:</td>
+          <td><%= @tiktok_profile.username %></td>
+        </tr>
+        <tr>
+          <td>Descrição:</td>
+          <td><%= @tiktok_profile.bio_description %></td>
+        </tr>
+        <tr>
+          <td>Seguidores:</td>
+          <td><%= number_with_delimiter(@tiktok_profile.followers) %></td>
+        </tr>
+        <tr>
+          <td>Total de Visualizações:</td>
+          <td><%= number_with_delimiter(@tiktok_profile.total_views) %></td>
+        </tr>
+        <tr>
+          <td>Quantidade de Vídeos:</td>
+          <td><%= @tiktok_profile.upload_count %></td>
+        </tr>
+        <tr>
+          <td>Média de Comentários (últimos 10):</td>
+          <td><%= number_with_delimiter(@tiktok_profile.avg_last10_comments) %></td>
+        </tr>
+        <tr>
+          <td>Média de Likes (últimos 10):</td>
+          <td><%= number_with_delimiter(@tiktok_profile.avg_last10_likes) %></td>
+        </tr>
+        <tr>
+          <td>Média de Visualizações (últimos 10):</td>
+          <td><%= number_with_delimiter(@tiktok_profile.avg_last10_views) %></td>
+        </tr>
+        <tr>
+          <td>Taxa de Engajamento:</td>
+          <td><%= number_to_percentage(@tiktok_profile.engagement_rate, precision: 2) %></td>
+        </tr>
+        <tr>
+          <td>Total de Likes:</td>
+          <td><%= number_with_delimiter(@tiktok_profile.likes) %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="success-actions">
+      <%= link_to "Próximo Passo", "#", class: "next-btn" %>
+      <%= link_to "Voltar para Início", "/", class: "home-btn" %>
+    </div>
   </div>
 </div>
 
@@ -39,7 +84,7 @@ body {
   padding: 20px;
 }
 
-.auth-success-container {
+.success-container {
   width: 100%;
   max-width: 500px;
 }
@@ -107,6 +152,25 @@ h1 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.profile-info {
+  margin-top: 20px;
+}
+
+.profile-info table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.profile-info table tr td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.profile-info table tr td:first-child {
+  font-weight: bold;
+  color: #606060;
 }
 
 .success-actions {
