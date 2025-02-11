@@ -1,0 +1,144 @@
+<div class="auth-success-container">
+  <div class="success-card">
+    <div class="success-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    
+    <h1>Autorização Concluída</h1>
+    
+    <div class="token-info">
+      <h3>Detalhes da Autorização</h3>
+      <div class="token-row">
+        <span class="token-label">Access Token:</span>
+        <span class="token-value truncate"><%= @access_token.present? ? @access_token[0..3] + "..." + @access_token[-4..-1] : "****" %></span>
+      </div>
+      <div class="token-row">
+        <span class="token-label">Refresh Token:</span>
+        <span class="token-value truncate"><%= @refresh_token.present? ? @refresh_token[0..3] + "..." + @refresh_token[-4..-1] : "****" %></span>
+      </div>
+      </div>
+      <div class="success-actions">
+        <%= link_to "Próximo Passo", "#", class: "next-btn" %>
+        <%= link_to "Voltar para Início", "/", class: "home-btn" %>
+      </div>
+  </div>
+</div>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+}
+
+.auth-success-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.success-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  color: #00C853;
+  margin: 0 auto 20px;
+}
+
+.success-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+h1 {
+  color: #161823;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.success-details {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 25px;
+}
+
+.token-info {
+  text-align: left;
+  margin-top: 15px;
+}
+
+.token-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.token-label {
+  font-weight: bold;
+  color: #606060;
+  margin-right: 10px;
+  min-width: 120px;
+}
+
+.token-value {
+  color: #161823;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.truncate {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.next-btn, .home-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.next-btn {
+  background-color: #00C853;
+  color: white;
+}
+
+.next-btn:hover {
+  background-color: #00E676;
+}
+
+.home-btn {
+  background-color: #f0f0f0;
+  color: #161823;
+}
+
+.home-btn:hover {
+  background-color: #e0e0e0;
+}
+</style>
