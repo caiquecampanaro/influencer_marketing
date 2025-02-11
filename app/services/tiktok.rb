@@ -2,68 +2,56 @@ require 'faraday'
 require 'json'
 
 class TikTok
+  # Constantes para configuração do TikTok
   CLIENT_KEY = 'sbawualtc227t17bl4'
   CLIENT_SECRET = 'QDDbiHtTVWlU8kQWHQbuj6R3qOdOgGqD'
-  REDIRECT_URI = 'http://localhost:3000/auth/callback'
+  
+  # Método para definir o redirect URI
+  def self.redirect_uri
+    # Prioriza ngrok se disponível
+    ngrok_url = 'https://647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app'
+    return "#{ngrok_url}/auth/callback"
+  end
+
+  # Definir REDIRECT_URI usando o método de classe
+  REDIRECT_URI = redirect_uri
 
   class << self
     # Passo 1: Trocar o código de autorização pelo access token
-    def get_access_token(code)
-      conn = Faraday.new do |f|
-        f.request :url_encoded  # Automatically sets Content-Type: application/x-www-form-urlencoded
-      end
+    def get_access_token(code, code_verifier)
+      # Passo 1: Trocar o código de autorização pelo access token
+      token_url = 'https://open.tiktokapis.com/v2/oauth/token/'
+      
+      body_params = {
+        client_key: CLIENT_KEY,
+        client_secret: CLIENT_SECRET,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: REDIRECT_URI,
+        code_verifier: code_verifier
+      }
 
-      response = conn.post('https://open.tiktokapis.com/v2/oauth/token/') do |req|
+      Rails.logger.debug("Parâmetros de token: #{body_params.except(:client_secret)}")
+
+      response = Faraday.post(token_url) do |req|
         req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        req.headers['Cache-Control'] = 'no-cache'
-        req.body = URI.encode_www_form({
-          client_key: CLIENT_KEY,
-          client_secret: CLIENT_SECRET,
-          code: code,
-          grant_type: 'authorization_code',
-          redirect_uri: REDIRECT_URI
-        })
+        req.body = URI.encode_www_form(body_params)
       end
 
-      parsed_response = JSON.parse(response.body)
+      Rails.logger.debug("Resposta do token: #{response.body}")
 
-      if response.status == 200
-        {
-          access_token: parsed_response['access_token'],
-          refresh_token: parsed_response['refresh_token'],
-          open_id: parsed_response['open_id'],
-          expires_in: parsed_response['expires_in'],
-          refresh_expires_in: parsed_response['refresh_expires_in'],
-          scope: parsed_response['scope']
-        }
-      else
-        {
-          error: parsed_response['error'],
-          error_description: parsed_response['error_description'],
-          log_id: parsed_response['log_id']
-        }
-      end
-    end
-
-    # Passo 2: Usar o access token para obter os dados do criador
-    def get_creator_data(access_token)
-      conn = Faraday.new do |f|
-        f.request :json
-        f.response :json
-      end
-
-      response = conn.get('https://open.tiktokapis.com/v2/creator/data') do |req|
-        req.headers['Authorization'] = "Bearer #{access_token}"
-      end
-
-      if response.status == 200
-        response.body['data']
-      else
-        {
-          error: response.body['error'],
-          message: response.body['message'],
-          log_id: response.body['log_id']
-        }
+      begin
+        token_data = JSON.parse(response.body, symbolize_names: true)
+        
+        if token_data[:error]
+          Rails.logger.error("Erro ao obter token: #{token_data}")
+          { error: true, error_description: token_data[:error_description] }
+        else
+          token_data
+        end
+      rescue JSON::ParserError => e
+        Rails.logger.error("Erro ao parsear resposta do token: #{e.message}")
+        { error: true, error_description: "Erro ao parsear resposta do token" }
       end
     end
   end

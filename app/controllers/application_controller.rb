@@ -1,4 +1,6 @@
-class ApplicationController < ActionController::API
+class ApplicationController < ActionController::Base
+  include ActionController::Cookies
+
   def serve_verification_file
     file_path = Rails.public_path.join('auth', 'callback', 'tiktokETtTSguI5Nu5gFu5UV2d7ZcFJTQR99xE.txt')
     
