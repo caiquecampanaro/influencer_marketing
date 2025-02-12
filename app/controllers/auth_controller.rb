@@ -8,7 +8,7 @@ class AuthController < ApplicationController
     session[:oauth_state] = state
 
     # Definir múltiplos escopos (codificados corretamente)
-    scopes = URI.encode_www_form_component('user.info.basic,user.info.profile,user.info.stats')
+    scopes = URI.encode_www_form_component('user.info.basic,user.info.profile,user.info.stats,video.list')
 
     # URL de redirecionamento exata do TikTok
     redirect_uri = 'https://5a40-2804-d4b-94d3-2a00-2071-a70d-d2a6-40cc.ngrok-free.app/auth/callback'
