@@ -19,6 +19,15 @@
       <%= link_to "Tentar Novamente", auth_tiktok_path, class: "retry-btn" %>
       <%= link_to "Voltar para Início", "/", class: "home-btn" %>
     </div>
+    
+    <!-- Botão para mostrar dados do perfil -->
+    <button id="showProfileData">Mostrar Dados do Perfil</button>
+
+    <!-- Área para exibir os dados do perfil -->
+    <div id="profileData" style="display:none;">
+      <h2>Dados do Perfil:</h2>
+      <div id="profileDataContent"></div>
+    </div>
   </div>
 </div>
 
@@ -115,4 +124,63 @@ h1 {
 .home-btn:hover {
   background-color: #e0e0e0;
 }
+
+#showProfileData {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%; /* Largura total para responsividade */
+  max-width: 300px; /* Largura máxima para telas maiores */
+  margin: 10px auto; /* Centralizar o botão */
+}
+
+#showProfileData:hover {
+  background-color: #3e8e41;
+  transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+}
+
+#profileData {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+@media (max-width: 600px) {
+  #showProfileData {
+    font-size: 14px; /* Tamanho da fonte menor em telas pequenas */
+    padding: 10px 20px;
+  }
+}
 </style>
+
+<script>
+  document.getElementById('showProfileData').addEventListener('click', function() {
+    // Aqui você pode definir os dados do perfil que deseja mostrar
+    const profileData = {
+      name: 'caiquecampanaro12',
+      username: 'caiquecampanaro12',
+      bio_description: 'RubyOnRails Developer',
+      followers: 3,
+      likes: 0
+    };
+
+    // Criar HTML para exibir os dados de forma polida
+    let profileHtml = '<table style="width: 100%; border-collapse: collapse;">';
+    profileHtml += '<tr><th style="border: 1px solid #ccc; padding: 8px;">Campo</th><th style="border: 1px solid #ccc; padding: 8px;">Valor</th></tr>';
+    for (const key in profileData) {
+      profileHtml += `<tr><td style='border: 1px solid #ccc; padding: 8px;'>${key.replace(/_/g, ' ').toUpperCase()}</td><td style='border: 1px solid #ccc; padding: 8px;'>${profileData[key]}</td></tr>`;
+    }
+    profileHtml += '</table>';
+
+    // Exibir os dados na área designada
+    document.getElementById('profileDataContent').innerHTML = profileHtml;
+    document.getElementById('profileData').style.display = 'block';
+  });
+</script>
