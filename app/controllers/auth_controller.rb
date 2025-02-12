@@ -126,16 +126,16 @@ class AuthController < ApplicationController
     @tiktok_service = TiktokProfileService.new(session[:tiktok_access_token])
     @profile_data = @tiktok_service.fetch_profile_data
 
-    # Verificar se o perfil já existe no banco de dados
-    existing_profile = TikTok.find_by(username: @profile_data[:username])
+    # Atualizar ou criar o perfil no banco de dados
+    @tiktok_profile = TikTok.find_or_initialize_by(username: @profile_data[:username])
+    @tiktok_profile.assign_attributes(@profile_data)
 
-    if existing_profile
-      @message = "Os dados já existem no banco de dados."
-      @tiktok_profile = existing_profile
-    else
-      # Criar novo registro se não existir
-      @tiktok_profile = TikTok.create(@profile_data)
+    if @tiktok_profile.new_record?
+      @tiktok_profile.save
       @message = "Novo perfil TikTok criado com sucesso!"
+    else
+      @tiktok_profile.save if @tiktok_profile.changed?
+      @message = "Os dados do perfil foram atualizados com sucesso!"
     end
 
     # Renderizar a view de sucesso com os dados atualizados

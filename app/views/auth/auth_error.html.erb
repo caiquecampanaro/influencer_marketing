@@ -8,11 +8,11 @@
       </svg>
     </div>
     
-    <h1>Erro de Autorização</h1>
+    <h1 style="color: #fe2c55;">Erro de Autorização</h1>
     
-    <div class="error-details">
-      <p class="error-code">Código do Erro: <%= error_code %></p>
-      <p class="error-description"><%= error_description %></p>
+    <div class="error-details" style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px;">
+      <p class="error-code" style="font-weight: bold; color: #fe2c55;">Código do Erro: <%= error_code %></p>
+      <p class="error-description" style="color: #333;"><%= error_description %></p>
     </div>
     
     <div class="error-actions">
@@ -23,130 +23,67 @@
 </div>
 
 <style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #f4f4f4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-}
-
-.auth-error-container {
-  width: 100%;
-  max-width: 500px;
-}
-
-.error-card {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.error-icon {
-  width: 80px;
-  height: 80px;
-  color: #FF0050;
-  margin: 0 auto 20px;
-}
-
-.error-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-h1 {
-  color: #161823;
-  margin-bottom: 15px;
-  font-size: 24px;
-}
-
-.error-details {
-  background-color: #f8f8f8;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 25px;
-}
-
-.error-code {
-  font-weight: bold;
-  color: #FF0050;
-  margin-bottom: 10px;
-}
-
-.error-description {
-  color: #606060;
-}
-
-.error-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.retry-btn, .home-btn {
-  display: inline-block;
-  padding: 12px 24px;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.retry-btn {
-  background-color: #FF0050;
-  color: white;
-}
-
-.retry-btn:hover {
-  background-color: #FF2070;
-}
-
-.home-btn {
-  background-color: #f0f0f0;
-  color: #161823;
-}
-
-.home-btn:hover {
-  background-color: #e0e0e0;
-}
-
-#showProfileData {
-  background-color: #4CAF50;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  width: 100%; /* Largura total para responsividade */
-  max-width: 300px; /* Largura máxima para telas maiores */
-  margin: 10px auto; /* Centralizar o botão */
-}
-
-#showProfileData:hover {
-  background-color: #3e8e41;
-  transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
-}
-
-#profileData {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-@media (max-width: 600px) {
-  #showProfileData {
-    font-size: 14px; /* Tamanho da fonte menor em telas pequenas */
-    padding: 10px 20px;
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
   }
-}
+
+  .auth-error-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .error-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    color: #fe2c55;
+  }
+
+  .error-details {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .error-code {
+    font-weight: bold;
+    color: #fe2c55;
+  }
+
+  .error-description {
+    color: #333;
+  }
+
+  .error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .retry-btn, .home-btn {
+    background-color: #fe2c55;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .retry-btn:hover, .home-btn:hover {
+    background-color: #d21f3c;
+    transform: translateY(-2px);
+  }
 </style>
