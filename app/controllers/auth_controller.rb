@@ -123,33 +123,22 @@ class AuthController < ApplicationController
 
   # Página de sucesso após autorização
   def success
-    unless session[:tiktok_access_token]
-      redirect_to auth_tiktok_path, alert: "Você precisa autorizar o aplicativo primeiro."
-      return
+    @tiktok_service = TiktokProfileService.new(session[:tiktok_access_token])
+    @profile_data = @tiktok_service.fetch_profile_data
+
+    # Verificar se o perfil já existe no banco de dados
+    existing_profile = TikTok.find_by(username: @profile_data[:username])
+
+    if existing_profile
+      @message = "Os dados já existem no banco de dados."
+      @tiktok_profile = existing_profile
+    else
+      # Criar novo registro se não existir
+      @tiktok_profile = TikTok.create(@profile_data)
+      @message = "Novo perfil TikTok criado com sucesso!"
     end
 
-    # Buscar dados do perfil
-    begin
-      profile_service = TiktokProfileService.new(session[:tiktok_access_token])
-      @profile_data = profile_service.fetch_profile_data
-
-      # Salvar no banco de dados
-      @tiktok_profile = TikTok.create!(@profile_data)
-
-      # Preparar variáveis para view
-      @access_token = session[:tiktok_access_token]
-      @refresh_token = session[:tiktok_refresh_token]
-      @authorized_scopes = session[:tiktok_authorized_scopes]
-
-    rescue => e
-      Rails.logger.error("Erro ao buscar perfil do TikTok: #{e.message}")
-      Rails.logger.error(e.backtrace.join("\n"))
-      
-      # Renderizar página de erro com detalhes
-      render 'auth_error', locals: {
-        error_code: 'profile_fetch_error',
-        error_description: "Não foi possível buscar os dados do perfil: #{e.message}"
-      }
-    end
+    # Renderizar a view de sucesso com os dados atualizados
+    render :success
   end
 end
