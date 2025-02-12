@@ -33,7 +33,7 @@ class TiktokProfileService
         bio_description: user_info['bio_description'] || '',
         followers: user_info['follower_count'] || 0,
         total_views: 0,  # Não disponível na busca básica
-        upload_count: 0, # Não disponível na busca básica
+        upload_count: user_info['video_count'] || 0,
         avg_last10_comments: 0,
         avg_last10_likes: 0,
         avg_last10_views: 0,
@@ -65,7 +65,7 @@ class TiktokProfileService
     response = self.class.get('/user/info/', 
       headers: @headers,
       query: { 
-        fields: 'open_id,union_id,avatar_url,avatar_url_100,display_name,username,bio_description,follower_count,following_count,likes_count,create_time' 
+        fields: 'open_id,union_id,avatar_url,avatar_url_100,display_name,username,bio_description,follower_count,following_count,likes_count,create_time,video_count' 
       }
     )
 
