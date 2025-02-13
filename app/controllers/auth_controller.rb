@@ -11,7 +11,7 @@ class AuthController < ApplicationController
     scopes = URI.encode_www_form_component('user.info.basic,user.info.profile,user.info.stats,video.list')
 
     # URL de redirecionamento exata do TikTok
-    redirect_uri = 'https://5a40-2804-d4b-94d3-2a00-2071-a70d-d2a6-40cc.ngrok-free.app/auth/callback'
+    redirect_uri = 'https://2a46-2804-d4b-94d3-2a00-7d02-41e9-59d0-a64c.ngrok-free.app/auth/callback'
     encoded_redirect_uri = URI.encode_www_form_component(redirect_uri)
 
     # Gerar code challenge para PKCE
@@ -80,7 +80,7 @@ class AuthController < ApplicationController
       client_key: ENV['TIKTOK_CLIENT_KEY'],
       client_secret: ENV['TIKTOK_CLIENT_SECRET'],
       code: authorization_code,
-      redirect_uri: 'https://5a40-2804-d4b-94d3-2a00-2071-a70d-d2a6-40cc.ngrok-free.app/auth/callback',
+      redirect_uri: 'https://2a46-2804-d4b-94d3-2a00-7d02-41e9-59d0-a64c.ngrok-free.app/auth/callback',
       grant_type: 'authorization_code',
       code_verifier: session[:code_verifier]
     }
@@ -100,6 +100,9 @@ class AuthController < ApplicationController
         session[:tiktok_access_token] = response.parsed_response['access_token']
         session[:tiktok_refresh_token] = response.parsed_response['refresh_token']
         session[:tiktok_authorized_scopes] = authorized_scopes
+
+        # Armazena o access_token na sessão
+        session[:tiktok_access_token] = response['access_token']
 
         # Redirecionar para página de sucesso
         redirect_to auth_success_path
@@ -140,5 +143,13 @@ class AuthController < ApplicationController
 
     # Renderizar a view de sucesso com os dados atualizados
     render :success
+  end
+
+  def list_videos
+    access_token = session[:tiktok_access_token]  # Obtém o token da sessão
+    tiktok_service = TiktokProfileService.new(access_token)
+    @video_ids = tiktok_service.fetch_video_list
+
+    render json: @video_ids  # Retorna a lista de IDs de vídeos como JSON
   end
 end
