@@ -8,7 +8,7 @@ class TiktokProfileService
     @access_token = access_token
     @headers = {
       'Authorization' => "Bearer #{@access_token}",
-      'Content-Type' => 'application/json'
+      'Content-Type' => 'application/x-www-form-urlencoded'
     }
     @logger = Rails.logger
   end
@@ -57,37 +57,30 @@ class TiktokProfileService
   end
 
   def fetch_video_data(video_ids)
-    response = self.class.post('/video/query/', 
-      headers: { 
+    Rails.logger.info("Fetching video data for IDs: #{video_ids}")
+
+    response = self.class.post(
+      '/video/query/?fields=view_count,comment_count,like_count',
+      headers: {
         'Authorization' => "Bearer #{@access_token}",
-        'Content-Type' => 'application/json' 
+        'Content-Type' => 'application/x-www-form-urlencoded'
       },
       body: {
         filters: {
           video_ids: video_ids
-        },
-        fields: ['view_count', 'comment_count', 'like_count']
+        }
       }.to_json
     )
 
-    if response.success?
-      # Processar e retornar os dados dos vídeos
-      video_data = response.parsed_response['data']['videos']
-      results = video_data.map do |video|
-        {
-          id: video['id'],
-          view_count: video['view_count'],
-          comment_count: video['comment_count'],
-          like_count: video['like_count']
-        }
-      end
+    Rails.logger.info("Response Code: #{response.code}")
+    Rails.logger.info("Response Body: #{response.body}")
 
-      results
+    if response.success?
+      video_data = response.parsed_response['data']
+      return video_data
     else
-      # Adicionando log para capturar a resposta da API
-      Rails.logger.error("Erro ao buscar dados dos vídeos: #{response.message}")
-      Rails.logger.error("Resposta da API: #{response.body}")
-      raise "Erro ao buscar dados dos vídeos"
+      Rails.logger.error("Erro ao buscar os dados do vídeo: #{response.message}")
+      raise "Erro ao buscar os dados do vídeo"
     end
   end
 
@@ -95,7 +88,7 @@ class TiktokProfileService
     Rails.logger.info("Fetching video list with access token: #{@access_token}")
 
     response = self.class.post("/video/list/?fields=cover_image_url,id,title", 
-      headers: { 
+      headers: {
         'Authorization' => "Bearer #{@access_token}",
         'Content-Type' => 'application/json' 
       },
@@ -123,9 +116,9 @@ class TiktokProfileService
     @logger.debug(" Buscando informações básicas do usuário")
 
     # Campos disponíveis no escopo user.info.basic
-    response = self.class.get('/user/info/', 
+    response = self.class.get('/user/info/',
       headers: @headers,
-      query: { 
+      query: {
         fields: 'open_id,union_id,avatar_url,avatar_url_100,display_name,username,bio_description,follower_count,following_count,likes_count,create_time,video_count' 
       }
     )
