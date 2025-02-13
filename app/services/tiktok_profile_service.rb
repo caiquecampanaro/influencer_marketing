@@ -26,18 +26,38 @@ class TiktokProfileService
         @logger.debug("   #{key}: #{value}")
       end
 
-      # Calcular métricas
+      # Buscar informações do usuário  
+      video_list = fetch_video_list
+      @logger.debug(" Dados brutos da lista de vídeos:")
+      video_list.each do |key, value|
+        @logger.debug("   #{key}: #{value}")
+      end
+
+      # Buscar informações do usuário  
+      video_data = fetch_video_data(video_list)
+      @logger.debug(" Dados brutos dos vídeos:")
+      video_data.each do |key, value|
+        @logger.debug("   #{key}: #{value}")
+      end
+
+      # Calcular métricas após obter todos os dados
+      total_views = video_data['videos'].sum { |video| video['view_count'].to_i}
+      avg_last10_comments = video_data['videos'].last(10).sum { |video| video['comment_count'].to_i } / [video_data['videos'].size, 10].min
+      avg_last10_likes = video_data['videos'].last(10).sum { |video| video['like_count'].to_i } / [video_data['videos'].size, 10].min
+      avg_last10_views = video_data['videos'].last(10).sum { |video| video['view_count'].to_i } / [video_data['videos'].size, 10].min
+
+      # Preparar dados do perfil
       profile_data = {
         name: user_info['display_name'] || '',
         username: user_info['username'] || '',
         bio_description: user_info['bio_description'] || '',
         followers: user_info['follower_count'] || 0,
-        total_views: 0,  # Não disponível na busca básica
+        total_views: total_views,
         upload_count: user_info['video_count'] || 0,
-        avg_last10_comments: 0,
-        avg_last10_likes: 0,
-        avg_last10_views: 0,
-        engagement_rate: 0,
+        avg_last10_comments: avg_last10_comments,
+        avg_last10_likes: avg_last10_likes,
+        avg_last10_views: avg_last10_views,
+        engagement_rate: 0, # Será calculada mais tarde
         joined_count: calculate_account_age(user_info['create_time']),
         likes: user_info['likes_count'] || 0
       }
@@ -109,8 +129,6 @@ class TiktokProfileService
       raise "Erro ao buscar a lista de vídeos"
     end
   end
-
-  private
 
   def fetch_user_info
     @logger.debug(" Buscando informações básicas do usuário")
