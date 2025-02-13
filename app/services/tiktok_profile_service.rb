@@ -45,19 +45,21 @@ class TiktokProfileService
       avg_last10_comments = video_data['videos'].last(10).sum { |video| video['comment_count'].to_i } / [video_data['videos'].size, 10].min
       avg_last10_likes = video_data['videos'].last(10).sum { |video| video['like_count'].to_i } / [video_data['videos'].size, 10].min
       avg_last10_views = video_data['videos'].last(10).sum { |video| video['view_count'].to_i } / [video_data['videos'].size, 10].min
+      total_followers = user_info['follower_count'] || 0
+      engagement_rate = avg_last10_views / total_followers
 
       # Preparar dados do perfil
       profile_data = {
         name: user_info['display_name'] || '',
         username: user_info['username'] || '',
         bio_description: user_info['bio_description'] || '',
-        followers: user_info['follower_count'] || 0,
+        followers: total_followers,
         total_views: total_views,
         upload_count: user_info['video_count'] || 0,
         avg_last10_comments: avg_last10_comments,
         avg_last10_likes: avg_last10_likes,
         avg_last10_views: avg_last10_views,
-        engagement_rate: 0, # Será calculada mais tarde
+        engagement_rate: engagement_rate,
         joined_count: calculate_account_age(user_info['create_time']),
         likes: user_info['likes_count'] || 0
       }
