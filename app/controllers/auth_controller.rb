@@ -11,7 +11,7 @@ class AuthController < ApplicationController
     scopes = URI.encode_www_form_component('user.info.basic,user.info.profile,user.info.stats,video.list')
 
     # URL de redirecionamento exata do TikTok
-    redirect_uri = 'https://2a46-2804-d4b-94d3-2a00-7d02-41e9-59d0-a64c.ngrok-free.app/auth/callback'
+    redirect_uri = 'https://ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app/auth/callback'
     encoded_redirect_uri = URI.encode_www_form_component(redirect_uri)
 
     # Gerar code challenge para PKCE
@@ -80,7 +80,7 @@ class AuthController < ApplicationController
       client_key: ENV['TIKTOK_CLIENT_KEY'],
       client_secret: ENV['TIKTOK_CLIENT_SECRET'],
       code: authorization_code,
-      redirect_uri: 'https://2a46-2804-d4b-94d3-2a00-7d02-41e9-59d0-a64c.ngrok-free.app/auth/callback',
+      redirect_uri: 'https://ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app/auth/callback',
       grant_type: 'authorization_code',
       code_verifier: session[:code_verifier]
     }

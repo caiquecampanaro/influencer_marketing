@@ -5,6 +5,6 @@ Rails.application.routes.draw do
   get 'videos/list', to: 'auth#list_videos'
   get '/auth/test_creator/:username', to: 'auth#test_creator_data'
   get '/callback/tiktok*.txt', to: 'application#serve_verification_file'
-  get '/callback/tiktokETtTSguI5Nu5gFu5UV2d7ZcFJTQR99xE.txt', to: 'application#serve_verification_file'
+  get '/callback/tiktok881RKSuVOc4TOm97Z5HQBPLtFskXOZlI.txt', to: 'application#serve_verification_file'
 
 end

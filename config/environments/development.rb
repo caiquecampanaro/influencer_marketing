@@ -78,7 +78,7 @@ Rails.application.configure do
   ENV['TIKTOK_CLIENT_SECRET'] = config.x.tiktok.client_secret
 
   # Adicionar host do ngrok
-  config.hosts << "2a46-2804-d4b-94d3-2a00-7d02-41e9-59d0-a64c.ngrok-free.app"
+  config.hosts << "ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app"
 
   # Permitir hosts externos para redirecionamento
   config.hosts << "open.tiktokapis.com"
