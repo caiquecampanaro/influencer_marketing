@@ -2,24 +2,20 @@ require 'faraday'
 require 'json'
 
 class TikTok
-  # Constantes para configuração do TikTok
   CLIENT_KEY = 'sbawualtc227t17bl4'
   CLIENT_SECRET = 'QDDbiHtTVWlU8kQWHQbuj6R3qOdOgGqD'
-  
-  # Método para definir o redirect URI
+
   def self.redirect_uri
-    # Definir redirect URI de forma mais explícita
     ngrok_base = '5638-2804-d4b-94d3-2a00-9d95-aa9c-9f09-e8e0.ngrok-free.app'
     "https://#{ngrok_base}/auth/callback"
   end
 
-  # Definir REDIRECT_URI usando o método de classe
   REDIRECT_URI = redirect_uri
 
   class << self
-    # Passo 1: Trocar o código de autorização pelo access token
+
     def get_access_token(code, code_verifier)
-      # Passo 1: Trocar o código de autorização pelo access token
+
       token_url = 'https://open.tiktokapis.com/v2/oauth/token/'
       
       body_params = {

@@ -17,30 +17,25 @@ class TiktokProfileService
     @logger.debug(" Iniciando busca de dados do perfil TikTok")
 
     begin
-      # Buscar informações do usuário
       user_info = fetch_user_info
 
-      # Log detalhado dos dados brutos
       @logger.debug(" Dados brutos do usuário:")
       user_info.each do |key, value|
         @logger.debug("   #{key}: #{value}")
       end
 
-      # Buscar informações do usuário  
       video_list = fetch_video_list
       @logger.debug(" Dados brutos da lista de vídeos:")
       video_list.each do |key, value|
         @logger.debug("   #{key}: #{value}")
       end
 
-      # Buscar informações do usuário  
       video_data = fetch_video_data(video_list)
       @logger.debug(" Dados brutos dos vídeos:")
       video_data.each do |key, value|
         @logger.debug("   #{key}: #{value}")
       end
 
-      # Calcular métricas após obter todos os dados
       total_views = video_data['videos'].sum { |video| video['view_count'].to_i}
       avg_last10_comments = video_data['videos'].last(10).sum { |video| video['comment_count'].to_i } / [video_data['videos'].size, 10].min
       avg_last10_likes = video_data['videos'].last(10).sum { |video| video['like_count'].to_i } / [video_data['videos'].size, 10].min
@@ -48,7 +43,6 @@ class TiktokProfileService
       total_followers = user_info['follower_count'] || 0
       engagement_rate = avg_last10_views / total_followers
 
-      # Preparar dados do perfil
       profile_data = {
         name: user_info['display_name'] || '',
         username: user_info['username'] || '',
@@ -135,7 +129,6 @@ class TiktokProfileService
   def fetch_user_info
     @logger.debug(" Buscando informações básicas do usuário")
 
-    # Campos disponíveis no escopo user.info.basic
     response = self.class.get('/user/info/',
       headers: @headers,
       query: {
@@ -154,7 +147,7 @@ class TiktokProfileService
     @logger.debug(" Calculando idade da conta")
 
     if create_time
-      # Converte timestamp para data e calcula diferença
+
       account_creation_date = Time.at(create_time.to_i)
       years = ((Time.now - account_creation_date) / 1.year.seconds).to_i
       @logger.debug("   Conta criada há #{years} anos")
