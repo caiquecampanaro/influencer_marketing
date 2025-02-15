@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   get 'videos/list', to: 'auth#list_videos'
   get '/auth/test_creator/:username', to: 'auth#test_creator_data'
   get '/callback/tiktok*.txt', to: 'application#serve_verification_file'
-  get '/callback/tiktok881RKSuVOc4TOm97Z5HQBPLtFskXOZlI.txt', to: 'application#serve_verification_file'
+  get '/callback/tiktokRSGCQZexU2B8BHfz106Cmy76m3cJK20W.txt', to: 'application#serve_verification_file'
   get '/auth/facebook', to: 'auth#facebook_login'
   get '/auth/facebook/callback', to: 'auth#facebook_callback'
   get '/auth/youtube', to: 'auth#youtube_authorize', as: :youtube_auth
