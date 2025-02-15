@@ -152,4 +152,38 @@ class AuthController < ApplicationController
 
     render json: @video_ids  # Retorna a lista de IDs de vídeos como JSON
   end
+
+  def facebook
+    state = SecureRandom.hex(16)
+    session[:oauth_state] = state
+
+    redirect_to "https://www.facebook.com/v22.0/dialog/oauth?" + {
+      client_id: ENV['FACEBOOK_APP_ID'],
+      redirect_uri: 'https://ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app/auth/facebook/callback',
+      state: state,
+      scope: 'public_profile,email',
+      display: 'popup'
+    }.to_query
+  end
+
+  def facebook_callback
+    return render plain: "Erro de segurança: State inválido", status: 403 if params[:state] != session[:oauth_state]
+
+    service = FacebookAuthService.new
+    token_response = service.get_access_token(params[:code], 'https://ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app/auth/facebook/callback')
+    user_info = service.get_user_info(token_response['access_token'])
+
+    facebook = Facebook.create(
+      name: user_info['name'],
+      username: user_info['id'],
+      bio_description: "",
+      followers: 0,
+      upload_count: 0,
+      avg_last10_comments: 0,
+      avg_last10_likes: 0,
+      avg_last10_views: 0,
+      engagement_rate: 0.0,
+      joined_count: 1
+    )
+  end
 end
