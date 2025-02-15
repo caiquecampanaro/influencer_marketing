@@ -8,4 +8,6 @@ Rails.application.routes.draw do
   get '/callback/tiktok881RKSuVOc4TOm97Z5HQBPLtFskXOZlI.txt', to: 'application#serve_verification_file'
   get '/auth/facebook', to: 'auth#facebook_login'
   get '/auth/facebook/callback', to: 'auth#facebook_callback'
+  get '/auth/youtube', to: 'auth#youtube_authorize', as: :youtube_auth
+  get '/auth/youtube/callback', to: 'auth#youtube_callback'
 end

@@ -9,7 +9,7 @@ class TikTok
   # Método para definir o redirect URI
   def self.redirect_uri
     # Definir redirect URI de forma mais explícita
-    ngrok_base = '647b-2804-d4b-94d3-2a00-add1-9c47-9fd3-7578.ngrok-free.app'
+    ngrok_base = '5638-2804-d4b-94d3-2a00-9d95-aa9c-9f09-e8e0.ngrok-free.app'
     "https://#{ngrok_base}/auth/callback"
   end
 

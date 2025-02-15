@@ -11,7 +11,7 @@ class AuthController < ApplicationController
     scopes = URI.encode_www_form_component('user.info.basic,user.info.profile,user.info.stats,video.list')
 
     # URL de redirecionamento exata do TikTok
-    redirect_uri = 'https://ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app/auth/callback'
+    redirect_uri = 'https://5638-2804-d4b-94d3-2a00-9d95-aa9c-9f09-e8e0.ngrok-free.app/auth/callback'
     encoded_redirect_uri = URI.encode_www_form_component(redirect_uri)
 
     # Gerar code challenge para PKCE
@@ -80,7 +80,7 @@ class AuthController < ApplicationController
       client_key: ENV['TIKTOK_CLIENT_KEY'],
       client_secret: ENV['TIKTOK_CLIENT_SECRET'],
       code: authorization_code,
-      redirect_uri: 'https://ab3b-2804-d4b-94d3-2a00-bd15-68b2-f7f3-ef88.ngrok-free.app/auth/callback',
+      redirect_uri: 'https://5638-2804-d4b-94d3-2a00-9d95-aa9c-9f09-e8e0.ngrok-free.app/auth/callback',
       grant_type: 'authorization_code',
       code_verifier: session[:code_verifier]
     }
@@ -185,5 +185,57 @@ class AuthController < ApplicationController
       engagement_rate: 0.0,
       joined_count: 1
     )
+  end
+
+  def youtube_authorize
+    state = SecureRandom.hex(16)
+    session[:oauth_state] = state
+  
+    auth_params = {
+      client_id: ENV['GOOGLE_CLIENT_ID'],
+      redirect_uri: ENV['YOUTUBE_REDIRECT_URI'],
+      response_type: 'code',
+      scope: 'https://www.googleapis.com/auth/youtube.readonly',
+      state: state,
+      access_type: 'offline',
+      prompt: 'consent'
+    }
+  
+    redirect_to "https://accounts.google.com/o/oauth2/v2/auth?#{auth_params.to_query}"
+  end
+
+  def youtube_callback
+    if params[:state] != session[:oauth_state]
+      redirect_to root_path, alert: 'Invalid state parameter'
+      return
+    end
+
+    begin
+      token_response = exchange_code(params[:code])
+      creator = Youtube.get_creator_data(token_response['access_token'])
+      
+      if creator.save
+        redirect_to dashboard_path, notice: 'YouTube data imported!'
+      else
+        redirect_back alert: "Error saving data: #{creator.errors.full_messages}"
+      end
+    rescue => e
+      Rails.logger.error "YouTube API Error: #{e.message}"
+      redirect_to root_path, alert: "Error connecting to YouTube: #{e.message}"
+    end
+  end
+
+  private
+
+  def exchange_code(code)
+    HTTParty.post('https://oauth2.googleapis.com/token', {
+      body: {
+        code: code,
+        client_id: ENV['GOOGLE_CLIENT_ID'],
+        client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+        redirect_uri: ENV['YOUTUBE_REDIRECT_URI'],
+        grant_type: 'authorization_code'
+      }
+    })
   end
 end
